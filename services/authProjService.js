@@ -240,28 +240,28 @@ class AuthProjModel {
 
   static async getAllDatas(data, res, id, projectName) {
     let collectionName = data["collectionName"];
+    const dbName = `${id}_${projectName}`;
 
-    console.log("called");
-    console.log(projectName + collectionName);
+    console.log(
+      `Fetching all data from collection "${collectionName}" in database "${dbName}"`
+    );
 
-    await dbconfig(`${id}_${projectName}`);
-    let databaseInstance = mongoose.connection;
     try {
-      databaseInstance.on("open", async function () {
-        console.log("db opened");
-      });
+      // Switch to the desired database if not already there
+      if (mongoose.connection.name !== dbName) {
+        await mongoose.connection.useDb(dbName);
+        console.log(`Switched to database: ${dbName}`);
+      }
 
-      let collectionList = await databaseInstance.collection(collectionName);
-
-      let result = await collectionList.find({});
-
-      await mongoose.connection.close();
-      let finalres = await result.toArray();
+      const databaseInstance = mongoose.connection.db; // Get the underlying MongoDB database object
+      const collection = databaseInstance.collection(collectionName);
+      const resultCursor = collection.find({});
+      const finalres = await resultCursor.toArray();
 
       return res.json({ documents: finalres });
-    } catch (e) {
-      console.error(e);
-      return res.json(400);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return res.status(500).json({ error: "Failed to fetch data" });
     }
   }
 
