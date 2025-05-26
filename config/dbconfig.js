@@ -1,26 +1,53 @@
 const mongoose = require("mongoose");
 
+const dbCache = {};
+
 async function databaseConnect(name = "FIREBASE_USERS") {
   try {
     if (mongoose.connection.readyState === 1) {
-      console.log(`Connection already exists. Using database: ${name}`);
-      const db = mongoose.connection.useDb(name);
-      return db; // Return the database object
+      // If already connected, reuse or create sub-database connection
+      if (!dbCache[name]) {
+        console.log(
+          `Reusing existing connection and switching to database: ${name}`
+        );
+        dbCache[name] = mongoose.connection.useDb(name, { useCache: true });
+      }
+      return dbCache[name];
     } else {
-      console.log("Creating a new connection.");
+      console.log("Creating a new Mongoose connection...");
       await mongoose.connect(
-        `mongodb+srv://dhinesh2004saravanan:9043702596@sample.tebyjlq.mongodb.net/${name}?retryWrites=true&w=majority&appName=Sample` // Please replace YOUR_PASSWORD
+        `mongodb+srv://dhinesh2004saravanan:9043702596@sample.tebyjlq.mongodb.net/${name}?retryWrites=true&w=majority&appName=Sample`
       );
-      console.log(
-        `Successfully connected to MongoDB and using database: ${name}`
-      );
-      return mongoose.connection.db; // Return the database object
+      console.log(`Connected and using database: ${name}`);
+      dbCache[name] = mongoose.connection.useDb(name, { useCache: true });
+      return dbCache[name];
     }
   } catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    throw error; // Re-throw the error for the calling code to handle
+    console.error("MongoDB connection error:", error);
+    throw error;
   }
 }
+// async function databaseConnect(name = "FIREBASE_USERS") {
+//   try {
+//     if (mongoose.connection.readyState === 1) {
+//       console.log(`Connection already exists. Using database: ${name}`);
+//       const db = mongoose.connection.useDb(name);
+//       return db; // Return the database object
+//     } else {
+//       console.log("Creating a new connection.");
+//       await mongoose.connect(
+//         `mongodb+srv://dhinesh2004saravanan:9043702596@sample.tebyjlq.mongodb.net/${name}?retryWrites=true&w=majority&appName=Sample` // Please replace YOUR_PASSWORD
+//       );
+//       console.log(
+//         `Successfully connected to MongoDB and using database: ${name}`
+//       );
+//       return mongoose.connection.db; // Return the database object
+//     }
+//   } catch (error) {
+//     console.error("Error connecting to MongoDB:", error);
+//     throw error; // Re-throw the error for the calling code to handle
+//   }
+// }
 module.exports = async function (name) {
   databaseConnect(name);
 };
