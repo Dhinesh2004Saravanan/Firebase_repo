@@ -118,6 +118,7 @@ app.post("/*", async function (req, res) {
   
 
   if (parts[parts.length - 1] == "getAllDatas") {
+  
     return AuthProjServices.getAllDatas(req.body, res, parts[1], parts[2]);
   }
 

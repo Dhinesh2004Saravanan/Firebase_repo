@@ -245,6 +245,7 @@ class AuthProjModel {
     console.log(
       `Fetching all data from collection "${collectionName}" in database "${dbName}"`
     );
+    await dbconfig(`${id}_${projectName}`);
 
     try {
       // Switch to the desired database if not already there
