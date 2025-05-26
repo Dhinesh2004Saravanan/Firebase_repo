@@ -14,7 +14,6 @@ class UserAuthentication {
         message: "user already registered",
       });
     }
-    
 
     const userCred = new userAuthCollection({
       emailId: emailId,
@@ -32,8 +31,7 @@ class UserAuthentication {
     });
   }
 
-  static async login(data, res) 
-  {
+  static async login(data, res) {
     let email = data["emailId"];
     let password = data["password"];
 
@@ -54,6 +52,5 @@ class UserAuthentication {
       message: userCred,
     });
   }
-
 }
 module.exports = UserAuthentication;

@@ -8,6 +8,7 @@ const os = require("os");
 var app = express();
 
 const dbconfig = require("./config/dbconfig");
+const { default: mongoose } = require("mongoose");
 //const userAuthCollection = require("./controller/userAuthModel");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -97,16 +98,16 @@ app.post("/*", async function (req, res) {
 
     await dbconfig(`${userId}_${projectName}`);
     console.log("user requested for authentication");
-    return AuthProjServices.register(req.body, res);
+    return AuthProjServices.register(req.body, res, userId, projectName);
   }
 
   if (parts[parts.length - 2] == "auth" && parts[parts.length - 1] == "log") {
     var userId = parts[1];
     var projectName = parts[2];
 
-    await dbconfig(`${userId}_${projectName}`);
     console.log("user requested for authentication");
-    return AuthProjServices.login(req.body, res);
+    await dbconfig(`${userId}_${projectName}`);
+    return AuthProjServices.login(req.body, res, userId, projectName);
   }
 
   // for getting the firebase like Auth Information
@@ -114,6 +115,7 @@ app.post("/*", async function (req, res) {
   if (req.url == "/getProjectAuthDetails") {
     return AuthProjServices.getDataAuth(req.body, res);
   }
+  
 
   if (parts[parts.length - 1] == "getAllDatas") {
     return AuthProjServices.getAllDatas(req.body, res, parts[1], parts[2]);
@@ -128,7 +130,16 @@ app.post("/*", async function (req, res) {
 
   if (parts[parts.length - 1] == "get") {
     await dbconfig(`${parts[1]}_${parts[2]}`);
-    return AuthProjServices.getValue(req.body, res,parts[3]);
+    return AuthProjServices.getValue(req.body, res, parts[3]);
+  }
+
+  if (parts[parts.length - 1] == "update") {
+    await dbconfig(`${parts[1]}_${parts[2]}`);
+    return AuthProjServices.updateDocs(req.body, res, parts[3]);
+  }
+  if (parts[parts.length - 1] == "delete") {
+    await dbconfig(`${parts[1]}_${parts[2]}`);
+    return AuthProjServices.deleteDocs(req.body, res, parts[3]);
   }
 
   if (parts[parts.length - 2] == "addData") {

@@ -25,9 +25,6 @@ const userAuthSchema = new mongoose.Schema({
   },
 });
 
-
-
-
 // creating a collection
 
 userAuthSchema.pre("save", async function () {
