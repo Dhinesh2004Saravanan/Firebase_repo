@@ -126,15 +126,16 @@ class AuthProjModel {
     try {
       let userId = data["userId"];
       let projectName = data["projectName"];
-      //  let connectionString = `mongodb://127.0.0.1:27017/${userId}_${projectName}?maxPoolSize=10`; // Update this with your actual connection string
 
       await dbconfig(`${userId}_${projectName}`);
 
-      // Perform the database operations
       let authData = await userProjAuthCollection.find({});
       console.log(authData);
 
-      await mongoose.connection.close();
+      // Defer connection close until response is sent
+      res.on("finish", () => {
+        mongoose.connection.close();
+      });
 
       return res.status(200).json({
         result: authData,
