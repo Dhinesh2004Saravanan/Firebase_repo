@@ -48,9 +48,7 @@ async function databaseConnect(name = "FIREBASE_USERS") {
 //     throw error; // Re-throw the error for the calling code to handle
 //   }
 // }
-module.exports = async function (name) {
-  databaseConnect(name);
-};
+module.exports = databaseConnect;
 /*
 async function databaseConnect(name = "FIREBASE_USERS") {
   try {

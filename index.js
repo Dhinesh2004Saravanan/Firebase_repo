@@ -92,7 +92,8 @@ app.post("/*", async function (req, res) {
   }
 
   // for getting authenticationData from based on given data
-  if (parts[parts.length - 2] == "auth" && parts[parts.length - 1] == "reg") {
+  if (parts[parts.length - 2] == "auth" && parts[parts.length - 1] == "reg") 
+    {
     var userId = parts[1];
     var projectName = parts[2];
 

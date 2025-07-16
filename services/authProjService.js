@@ -19,16 +19,12 @@ class AuthProjModel {
           emailId: emailId,
           password: password,
         });
-
         console.log(userAuthenticationDetails);
-
         const doc = await userAuthenticationDetails.save();
         console.log(`user document for registration is ${doc}`);
-
         const token = jwtToken.sign({ emailId: doc.emailId }, "secretKey", {
           expiresIn: "24h",
         });
-
         return res.status(200).json({
           status: true,
           userData: doc,
@@ -122,20 +118,16 @@ class AuthProjModel {
     }
   }
 
+  // It retrives all the users which are  the authenticated from that particular project
   static async getDataAuth(data, res) {
     try {
       let userId = data["userId"];
       let projectName = data["projectName"];
 
-      await dbconfig(`${userId}_${projectName}`);
+      await dbconfig(`${userId}_${projectName}`); // This should handle pool connection caching
 
       let authData = await userProjAuthCollection.find({});
       console.log(authData);
-
-      // Defer connection close until response is sent
-      res.on("finish", () => {
-        mongoose.connection.close();
-      });
 
       return res.status(200).json({
         result: authData,
@@ -149,43 +141,26 @@ class AuthProjModel {
   }
 
   static async addData(data, res, uid, projectName, collectionName) {
-    await dbconfig(`${uid}_${projectName}`);
+    try {
+      const db = await dbconfig(`${uid}_${projectName}`); // ✅ Await this!
+      const collection = db.collection(collectionName);
 
-    let databaseInstance = mongoose.connection;
+      const result = await collection.insertOne(data);
 
-    databaseInstance.on("open", async function () {});
+      console.log(`Inserted doc with ID: ${result.insertedId}`);
 
-    console.log(collectionName);
-
-    databaseInstance.on("error", function (e) {
-      console.error(e);
-      return res.status(400).json({
+      return res.status(200).json({
+        status: true,
+        message: "Successfully inserted",
+      });
+    } catch (error) {
+      console.error("Error during DB operation:", error);
+      return res.status(500).json({
         status: false,
         success: false,
+        error: "Internal server error",
       });
-    });
-
-    let listOfCollections = await databaseInstance.listCollections();
-    var collectionInstance;
-    var flag = 0;
-
-    // if collection is already present
-
-    collectionInstance = await databaseInstance.collection(`${collectionName}`);
-    await collectionInstance.insertOne(data).then(async function (doc) {
-      console.log(`doc updated successfully ${doc.insertedId}`);
-    });
-
-    //if not present
-
-    //console.log(collectionInstance);
-    await mongoose.connection.close();
-
-    //console.log(collectionInstance);
-    return res.status(200).json({
-      status: true,
-      message: "successfully inserted",
-    });
+    }
   }
 
   static async getAllDataCollectionNameForDisplay(data, res) {
@@ -196,7 +171,7 @@ class AuthProjModel {
       // open database
 
       if (mongoose.connection.readyState === 1) {
-        await mongoose.connection.close();
+        //  await mongoose.connection.close();
       }
       dbconfig(`${id}_${projectName}`);
 
@@ -223,7 +198,7 @@ class AuthProjModel {
           finalList.push(collectionList[i]);
         }
       }
-      await mongoose.connection.close();
+      // await mongoose.connection.close();
       console.log(finalList);
 
       return res.json({
