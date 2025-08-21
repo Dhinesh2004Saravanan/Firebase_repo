@@ -42,7 +42,7 @@ class AuthProjModel {
         .status(500)
         .json({ status: false, message: "Registration failed" });
     }
-}
+  }
   // static async register(data, res, userId, projectName)
   // {
   //   console.log("authentication project model called");
@@ -103,10 +103,17 @@ class AuthProjModel {
 
       const isValid = await userCred.comparePassword(password);
 
-      return res.status(200).json({
-        status: isValid,
-        userData: userCred, // Sending the user data might be more useful
-      });
+      if (isValid) {
+        return res.status(200).json({
+          status: isValid,
+          userData: userCred, // Sending the user data might be more useful
+        });
+      } else {
+        return res.status(400).json({
+          status: isValid,
+          message: "INVALID PASSWORD",
+        });
+      }
     } catch (error) {
       console.error("Error during login:", error);
       // Optionally, you might want to handle connection errors differently
