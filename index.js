@@ -4,6 +4,7 @@ const projectAdd = require("./services/addProjectServices");
 const AuthProjServices = require("./services/authProjService");
 const jwtToken = require("jsonwebtoken");
 
+const cors = require("cors");
 const os = require("os");
 var app = express();
 
@@ -11,6 +12,7 @@ const dbconfig = require("./config/dbconfig");
 const { default: mongoose } = require("mongoose");
 //const userAuthCollection = require("./controller/userAuthModel");
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 
 app.get("/", function (req, res, next) {
@@ -62,8 +64,7 @@ app.get("/getIp", function (req, res) {
   getWifiIpAddress(res);
 });
 
-app.post("/*", async function (req, res) 
-{
+app.post("/*", async function (req, res) {
   // var ip = getWifiIpAddress();
   // console.log(ip);
   var str = `http://localhost:3030/${req.url}`;
@@ -92,17 +93,14 @@ app.post("/*", async function (req, res)
     return projectAdd.addProject(req.body, res);
   }
 
-  if(req.url=="/listProjects")
-  {
-          // 683203863b4c8932c96e8403 
-          await dbconfig();
-          return projectAdd.listProjectsByUser(req.body,res);
+  if (req.url == "/listProjects") {
+    // 683203863b4c8932c96e8403
+    await dbconfig();
+    return projectAdd.listProjectsByUser(req.body, res);
   }
 
-
   // for getting authenticationData from based on given data
-  if (parts[parts.length - 2] == "auth" && parts[parts.length - 1] == "reg") 
-    {
+  if (parts[parts.length - 2] == "auth" && parts[parts.length - 1] == "reg") {
     var userId = parts[1];
     var projectName = parts[2];
 
@@ -125,10 +123,8 @@ app.post("/*", async function (req, res)
   if (req.url == "/getProjectAuthDetails") {
     return AuthProjServices.getDataAuth(req.body, res);
   }
-  
 
   if (parts[parts.length - 1] == "getAllDatas") {
-  
     return AuthProjServices.getAllDatas(req.body, res, parts[1], parts[2]);
   }
 
