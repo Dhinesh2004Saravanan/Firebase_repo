@@ -42,7 +42,7 @@ class AuthProjModel {
         .status(500)
         .json({ status: false, message: "Registration failed" });
     }
-  }
+}
   // static async register(data, res, userId, projectName)
   // {
   //   console.log("authentication project model called");
@@ -92,7 +92,7 @@ class AuthProjModel {
 
     try {
       const users = await userProjAuthCollection.find({ emailId: email });
-      const userCred = users[0]; // Get the first user, if any
+      const userCred = users[0] ?? null; // Get the first user, if any
 
       if (!userCred) {
         return res.status(400).json({

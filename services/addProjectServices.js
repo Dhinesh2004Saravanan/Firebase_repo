@@ -5,7 +5,8 @@ class AddProjectService {
   // Assuming 'mongoose' and 'userAuthCollection' are properly imported and defined globally
   // userAuthCollection should be a Mongoose model (e.g., const userAuthCollection = mongoose.model('User', userSchema);)
 
-  static async addProject(data, res) {
+  static async addProject(data, res) 
+  {
     let userId = data["id"];
     let projectName = data["projectName"];
     console.log("Attempting to add project:", projectName, "for user:", userId);
@@ -60,6 +61,16 @@ class AddProjectService {
         message: `Failed to add project: ${error.message}`,
       });
     }
+
+
+
+
+
+    
+
+
+
   }
+
 }
 module.exports = AddProjectService;

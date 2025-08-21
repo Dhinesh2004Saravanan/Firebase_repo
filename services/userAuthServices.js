@@ -36,7 +36,7 @@ class UserAuthentication {
     let password = data["password"];
 
     let [userCred] = await userAuthCollection.find({ emailId: email });
-    if (userCred.length == 0) {
+    if (userCred==null) {
       return res.status(400).json({
         status: false,
         message: "user did not regitsered",

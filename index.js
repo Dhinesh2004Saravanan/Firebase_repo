@@ -62,7 +62,8 @@ app.get("/getIp", function (req, res) {
   getWifiIpAddress(res);
 });
 
-app.post("/*", async function (req, res) {
+app.post("/*", async function (req, res) 
+{
   // var ip = getWifiIpAddress();
   // console.log(ip);
   var str = `http://localhost:3030/${req.url}`;
@@ -90,6 +91,12 @@ app.post("/*", async function (req, res) {
     await dbconfig();
     return projectAdd.addProject(req.body, res);
   }
+
+  if(req.url=="/listProjects")
+  {
+          // 683203863b4c8932c96e8403 
+  }
+
 
   // for getting authenticationData from based on given data
   if (parts[parts.length - 2] == "auth" && parts[parts.length - 1] == "reg") 
