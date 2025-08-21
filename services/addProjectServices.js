@@ -142,7 +142,7 @@ if not then new key value pair get inserted bt not the original value as retaine
       });
     } else {
       let projectList = user_data.projects;
-      return res.status(400).json({
+      return res.status(200).json({
         status: true,
         projectList: projectList,
       });
