@@ -95,6 +95,8 @@ app.post("/*", async function (req, res)
   if(req.url=="/listProjects")
   {
           // 683203863b4c8932c96e8403 
+          await dbconfig();
+          return projectAdd.listProjectsByUser(req.body,res);
   }
 
 

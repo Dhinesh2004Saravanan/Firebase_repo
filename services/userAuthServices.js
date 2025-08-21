@@ -31,26 +31,60 @@ class UserAuthentication {
     });
   }
 
+  // static async login(data, res) {
+  //   let email = data["emailId"];
+  //   let password = data["password"];
+
+  //   let [userCred] = await userAuthCollection.find({ emailId: email });
+  //   if (userCred == null) {
+  //     return res.status(400).json({
+  //       status: false,
+  //       message: "user did not regitsered",
+  //     });
+  //   }
+
+  //   console.log(userCred.password);
+  //   let isValid = await userCred.comparePassword(password);
+
+  //   console.log(isValid);
+  //   if (isValid) {
+  //     return res.status(200).json({
+  //       status: isValid,
+  //       message: userCred,
+  //     });
+  //   } else {
+  //     return res.status(400).json({
+  //       status: false,
+  //       message: "password is incorrect",
+  //     });
+  //   }
+  // }
+
   static async login(data, res) {
     let email = data["emailId"];
     let password = data["password"];
 
-    let [userCred] = await userAuthCollection.find({ emailId: email });
-    if (userCred==null) {
+    let userCred = await userAuthCollection.findOne({ emailId: email });
+    if (!userCred) {
       return res.status(400).json({
         status: false,
-        message: "user did not regitsered",
+        message: "User not registered",
       });
     }
 
-    console.log(userCred);
     let isValid = await userCred.comparePassword(password);
 
-    console.log(isValid);
-    return res.status(200).json({
-      status: isValid,
-      message: userCred,
-    });
+    if (isValid) {
+      return res.status(200).json({
+        status: true,
+        message: userCred,
+      });
+    } else {
+      return res.status(400).json({
+        status: false,
+        message: "Password is incorrect",
+      });
+    }
   }
 }
 module.exports = UserAuthentication;

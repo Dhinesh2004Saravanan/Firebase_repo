@@ -4,6 +4,7 @@ const dbCache = {};
 
 async function databaseConnect(name = "FIREBASE_USERS") {
   try {
+    console.log("name" + name);
     if (mongoose.connection.readyState === 1) {
       // If already connected, reuse or create sub-database connection
       if (!dbCache[name]) {
